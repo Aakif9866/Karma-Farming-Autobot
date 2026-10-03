@@ -28,7 +28,7 @@ Last updated: 2026-10-03
 - ☑ Celery app (worker + beat, `system.ping`)
 - ☑ Frontend skeleton: dark theme, auth proxy, login, sidebar shell, dashboard status, phase placeholders, loading/error states
 - ☑ Dockerfiles (backend, frontend standalone) + docker-compose + read-only DB role init
-- ◐ CI workflow (backend, frontend, gitleaks): see the test status below
+- ☑ CI workflow green (backend, frontend, gitleaks): run 37121707795
 - ☑ OpenAPI → TS type generation (`pnpm gen:api`, CI drift check)
 - ⊘ `docker compose up` full-stack verification: blocked by local Docker Desktop failure (disk full → storage I/O errors)
 
@@ -84,5 +84,17 @@ Last updated: 2026-10-03
 - ☐ Production deployment
 - ☐ Expansion backlog (see PHASES.md § 11)
 
-## Test / lint status
-No code yet.
+## Test / lint status (2026-10-03, CI run 37121707795)
+| Check | Result |
+|---|---|
+| backend `ruff check`, `ruff format --check`, `mypy --strict` | ✅ |
+| backend `pytest` (unit + Postgres/Redis integration: health, auth, rate limit, bootstrap) | ✅ 7 passed |
+| `alembic upgrade head` + `alembic check` | ✅ |
+| frontend `eslint`, `tsc` (with `next typegen`) | ✅ |
+| frontend `vitest` | ✅ 4 passed |
+| frontend Playwright smoke (redirect to login, login error) | ✅ 2 passed |
+| API types in sync with backend OpenAPI | ✅ |
+| gitleaks | ✅ |
+| `docker compose up` locally | ⊘ not verified: Docker Desktop on the dev machine is unresponsive (disk was full) |
+
+Phase 1 acceptance: CI ✅, README quickstart written ✅, **local compose run pending** (needs a working Docker Desktop).
