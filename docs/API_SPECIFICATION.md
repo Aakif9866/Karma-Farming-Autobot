@@ -78,7 +78,7 @@ REST, JSON, prefix `/api/v1`. FastAPI generates the authoritative OpenAPI at `/a
 | GET | `/agent-runs/{id}` | steps, tokens, cost, errors |
 | POST | `/agent-runs/{id}/retry` | failed runs only |
 | GET | `/usage/today` | spend vs budget, tokens by task |
-| GET/PATCH | `/settings` | budgets, models, retention days, NSFW toggle, intervals |
+| GET/PATCH | `/settings` | token caps, models, retention days, intervals (NSFW is always excluded, so there is no toggle) |
 
 ## Example: topic detail
 

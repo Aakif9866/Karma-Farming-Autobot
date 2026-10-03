@@ -26,14 +26,23 @@ API publishing adds OAuth auth-code flow, token encryption and abuse risk. MVP: 
 ### ADR-008 Single-user MVP — Proposed
 No multi-tenancy or signup. The `users` table exists and ownership FKs are present so multi-user can come later without schema rewrites.
 
-### ADR-009 Thin LLM wrapper, Anthropic as default provider — Proposed
-One `structured()` function with per-task model config instead of a framework-level abstraction. Defaults: `claude-haiku-4-5` (cheap tasks), `claude-sonnet-5-5` (generation, vision). A second provider adapter is added only when needed. LangChain is pulled in only as LangGraph's dependency; its chains/agents are not used.
+### ADR-009 Thin LLM wrapper — Accepted; provider part superseded by ADR-013
+One `structured()` function with per-task model config instead of a framework-level abstraction. Model IDs per task come from config (see ADR-013 for the provider and defaults). LangChain is pulled in only as LangGraph's dependency; its chains/agents are not used.
 
 ### ADR-010 PRAW for Reddit access — Proposed
 PRAW handles OAuth, pagination and basic rate limiting, and is maintained. It runs inside Celery workers (sync is fine there). It is wrapped in a small `RedditClient` so normalisation and our stricter QPM ceiling live in one place. Fall back to raw `httpx` only if PRAW blocks something.
 
 ### ADR-011 Budget day and schedules in IST — Proposed
-The user is in India and the Indian communities are primary. Daily reports run at 08:00 IST; the budget resets at 00:00 IST. All timestamps are still stored in UTC.
+The user is in India and the Indian communities are primary. Daily reports run at 08:00 IST. The LLM token cap follows Groq's quota day (UTC), see ADR-013. All timestamps are still stored in UTC.
 
 ### ADR-012 Region filter instead of separate Indian/Global pages in MVP — Proposed
 The Indian Reddit and Global Reddit pages are presets of Trend Explorer (`?region=IN|GLOBAL`). This avoids three near-identical pages; dedicated pages can come later if they need unique widgets.
+
+### ADR-013 Groq free tier as the only LLM provider — Accepted (2026-10-03)
+User constraint: no paid providers. Groq's free plan (no card) gives each model 30 RPM, 1K req/day, 8K TPM and 200K tokens/day (checked against console.groq.com/docs on 2026-10-03). Model roles: `openai/gpt-oss-20b` cheap, `openai/gpt-oss-120b` strong, `qwen/qwen3.8-27b` vision. All three support strict JSON-schema outputs. Because limits are per model, spreading tasks across the three roughly triples daily capacity (~480K usable tokens/day). Consequences: budget is tokens, not dollars; every call must fit in ~7K tokens; drafts are limited to ~15/day on the strong model; quality is below frontier models, which the critic and evals must account for. **Never add a credit card**: that switches the org to paid billing. Model IDs change often, so they live in config only.
+
+### ADR-014 NSFW excluded entirely — Accepted (2026-10-03)
+`over_18` posts are dropped at ingestion and never stored; NSFW subreddits can't be added. There is no toggle.
+
+### ADR-015 Politics included in MVP — Accepted (2026-10-03)
+Indian and global politics subreddits are monitored. The critic's sensitive-subject checks (politics, religion, caste, communal topics) apply to every draft for these subs, and opinion summaries must stay attributional ("commenters argue…"), never taking a side.

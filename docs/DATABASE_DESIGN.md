@@ -50,12 +50,12 @@ erDiagram
 Single user in MVP; the table exists so ownership columns are correct from day 1.
 
 ### Reddit content
-**subreddits** — `id`, `name` (citext, unique), `region` (`IN`|`GLOBAL`), `tags` text[], `enabled` bool, `poll_interval_min` int, `description`, `subscribers` int, `over18` bool, `post_requirements` jsonb, `profile` jsonb (computed observed characteristics + baselines), `profile_updated_at`, `last_collected_at`, `source`.
+**subreddits** — `id`, `name` (citext, unique), `region` (`IN`|`GLOBAL`), `tags` text[], `enabled` bool, `poll_interval_min` int, `description`, `subscribers` int, `post_requirements` jsonb, `profile` jsonb (computed observed characteristics + baselines), `profile_updated_at`, `last_collected_at`, `source`.
 Index: `(enabled)`, `(region)`.
 
 **subreddit_rules** — `id`, `subreddit_id` FK, `priority` int, `short_name`, `description`, `kind` (`link`|`comment`|`all`), `constraints` jsonb (machine-checkable rules parsed from text), `fetched_at`. Unique `(subreddit_id, priority)`.
 
-**posts** — `id`, `reddit_id` (e.g. `t3_abc123`, unique), `subreddit_id` FK, `title`, `body`, `url`, `permalink`, `author_hash` (salted SHA-256), `created_utc`, `content_type` (enum: `text`,`question`,`link`,`image`,`gif`,`video`,`gallery`,`poll`,`news`,`other`), `flair`, `over18`, `is_deleted` bool, `score`, `num_comments`, `upvote_ratio` (latest values, denormalised from snapshots), `embedding` vector(384), `embedded_at`, `region`, `first_seen_at`, `last_polled_at`, `source`, `raw` jsonb (trimmed API payload, purged with text).
+**posts** — `id`, `reddit_id` (e.g. `t3_abc123`, unique), `subreddit_id` FK, `title`, `body`, `url`, `permalink`, `author_hash` (salted SHA-256), `created_utc`, `content_type` (enum: `text`,`question`,`link`,`image`,`gif`,`video`,`gallery`,`poll`,`news`,`other`), `flair`, `is_deleted` bool, `score`, `num_comments`, `upvote_ratio` (latest values, denormalised from snapshots), `embedding` vector(384), `embedded_at`, `region`, `first_seen_at`, `last_polled_at`, `source`, `raw` jsonb (trimmed API payload, purged with text).
 Indexes: `(subreddit_id, created_utc desc)`, `(created_utc desc)`, `(content_type)`, `(region, created_utc desc)`, HNSW on `embedding vector_cosine_ops`, GIN `to_tsvector('english', title || ' ' || coalesce(body,''))`.
 
 **post_snapshots** — `id` bigserial, `post_id` FK, `captured_at`, `score`, `num_comments`, `upvote_ratio`. Index `(post_id, captured_at)`. *Not in the original entity list; it is needed because velocity requires repeated observations.* Pruned to hourly granularity after 48 h and dropped after 14 days.
@@ -100,16 +100,16 @@ Indexes: `(subreddit_id, created_utc desc)`, `(created_utc desc)`, `(content_typ
 **performance_metrics** — `id` bigserial, `contribution_id` FK, `captured_at`, `score`, `num_comments`, `upvote_ratio`, `unique_commenters`, `max_depth`, `op_replies`. Index `(contribution_id, captured_at)`.
 
 ### Agent runtime
-**agent_runs** — `id`, `graph` (`daily_report`, `generate_drafts`, …), `trigger` (`schedule`|`user`), `status` (`queued`|`running`|`waiting_human`|`succeeded`|`failed`|`deferred_budget`), `input` jsonb, `output_ref` jsonb, `error`, `tokens_in`, `tokens_out`, `cost_usd` numeric(10,5), `started_at`, `finished_at`. Index `(graph, started_at desc)`, `(status)`.
+**agent_runs** — `id`, `graph` (`daily_report`, `generate_drafts`, …), `trigger` (`schedule`|`user`), `status` (`queued`|`running`|`waiting_human`|`succeeded`|`failed`|`deferred_budget`), `input` jsonb, `output_ref` jsonb, `error`, `tokens_in`, `tokens_out`, `started_at`, `finished_at`. Index `(graph, started_at desc)`, `(status)`.
 
-**agent_run_steps** — `id`, `run_id` FK, `node`, `status`, `attempt`, `model`, `tokens_in`, `tokens_out`, `cost_usd`, `duration_ms`, `error`, `started_at`.
+**agent_run_steps** — `id`, `run_id` FK, `node`, `status`, `attempt`, `model`, `tokens_in`, `tokens_out`, `duration_ms`, `error`, `started_at`.
 
 LangGraph checkpoints use `langgraph-checkpoint-postgres` in the same DB, in their own tables (managed by that library, not by Alembic).
 
 **config_versions** — `id`, `kind` (`taxonomy`|`scoring`), `version`, `content` jsonb, `active`, `created_at`.
 
-## Daily LLM spend query
-`SELECT coalesce(sum(cost_usd),0) FROM agent_run_steps WHERE started_at >= date_trunc('day', now() AT TIME ZONE 'Asia/Kolkata') AT TIME ZONE 'Asia/Kolkata'` gates every LLM call (ADR-011: budget day = IST).
+## Daily token usage query
+`SELECT model, coalesce(sum(tokens_in + tokens_out),0) FROM agent_run_steps WHERE started_at >= date_trunc('day', now() AT TIME ZONE 'UTC') GROUP BY model` gates every LLM call. Groq's daily quota resets on its own schedule (assumed UTC, verify in Phase 0), so our cap uses the UTC day. Reports are still scheduled in IST (ADR-011). The per-minute window is tracked in Redis, not SQL.
 
 ## Retention
 

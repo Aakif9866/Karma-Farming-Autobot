@@ -7,9 +7,9 @@ Everything here is a **Phase 0 verification item**. Items marked ⚠️ are base
 | Item | Assumption | Status |
 |---|---|---|
 | Auth | OAuth2 is required for every Data API call. "Script" app type works for a single personal account; "web app" type if publishing on behalf of the user via an auth-code flow. | ⚠️ verify |
-| App approval | ⚠️ Since late 2025 Reddit's *Responsible Builder Policy* requires new API clients to **request access and be approved**, instead of creating keys self-service at `reddit.com/prefs/apps`. Expect a review with an unknown turnaround. | ⚠️ **blocking** — verify first |
+| App approval | Since late 2025 Reddit's *Responsible Builder Policy* (updated June 2026) requires new API clients to **request access and be approved**; self-service key creation at `reddit.com/prefs/apps` is closed. Reported turnaround: 2–4 weeks. | **Blocking**: apply now |
 | App naming | A client named "Karma Farming …" may be rejected, because karma farming is a known spam pattern. Register the Reddit app with a neutral name and description (e.g. "Trend research assistant, personal use, read-mostly, human-approved posting"). | Recommendation |
-| Commercial use | Free access is for non-commercial/personal use. Any commercial use needs a separate agreement. | ⚠️ verify |
+| Cost | **Free** for non-commercial/personal use within 100 QPM. Commercial use is paid (reported $0.24 / 1K calls) and needs written approval. This project stays non-commercial. | Confirmed by multiple 2026 sources; re-check the official terms |
 | ML training | Data API terms forbid using Reddit content to train models without permission. **We do not train or fine-tune** on Reddit data. Using it as LLM *inference input* and computing embeddings for retrieval is assumed to be allowed. | ⚠️ verify the embeddings interpretation |
 
 ## Rate limits
@@ -43,7 +43,7 @@ That is under 10% of the limit, which leaves room for on-demand analysis and ret
 | score, num_comments | submission | Vote counts are **fuzzed**, so use them for trends, not exact truth |
 | upvote_ratio | submission | Present on submissions |
 | author | submission | Store a **salted hash** only; the raw username is shown live via permalink |
-| link_flair_text, over_18, spoiler, stickied, is_self, post_hint, domain | submission | `post_hint` is missing on many posts, so content type is derived from several fields |
+| link_flair_text, over_18 (used only to drop NSFW), spoiler, stickied, is_self, post_hint, domain | submission | `post_hint` is missing on many posts, so content type is derived from several fields |
 | media: `preview`, `media_metadata` (galleries), `secure_media` (v.redd.it), `is_gallery`, `is_video` | submission | v.redd.it uses DASH with separate audio. We store **metadata + derived features only** |
 | polls: `poll_data` | submission | ⚠️ availability inconsistent, verify |
 | comments | `/comments/{id}?sort=top&limit=…&depth=…` | One call per post, so only fetched selectively |
@@ -63,7 +63,7 @@ That is under 10% of the limit, which leaves room for on-demand analysis and ret
 1. **Honour deletions.** When a refresh shows a post or comment as deleted or removed by its author, purge its text and media features within 48 h (a retention job).
 2. **Retention.** Raw post/comment text is kept for 30 days by default (configurable). Aggregates (topic snapshots, metrics) are kept longer because they hold no user content.
 3. **No redistribution.** The UI shows excerpts with permalinks back to Reddit. There are no export/download features for raw Reddit content.
-4. **NSFW.** `over_18` content is excluded by default (setting).
+4. **NSFW.** `over_18` posts are dropped at ingestion and never stored. There is no setting for this (ADR-014). NSFW subreddits are rejected when added.
 5. **Posting** (Phase 7+, optional): only via the user's own OAuth token with the `submit` scope, one item per explicit click, after the critic passes and the user approves. It must respect each subreddit's rules, flair requirements and account restrictions (karma/age gates).
 
 ## Fallback if API access is delayed

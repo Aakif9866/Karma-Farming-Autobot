@@ -34,7 +34,7 @@ Keeping up with dozens of subreddits by hand is slow. Raw "top" lists hide the i
 4. **Deterministic first, LLM second.** Filtering, metrics and scoring are plain Python. LLMs are only used where language understanding is actually needed, and only on pre-filtered, budgeted batches.
 5. **Respect the platform.** Authorized API access only. Rate limits, subreddit rules, user deletions and Reddit's Data API terms are hard constraints, not suggestions.
 6. **Never pass off existing work as original.** Reposts, templates and remixes are labelled as such. Users' personal experiences are never invented.
-7. **Affordable for one developer.** Runs on a small budget with daily caps on spend.
+7. **Affordable for one developer.** Runs entirely on free tiers (Groq, Reddit non-commercial) and local models, with per-model daily token caps.
 
 ## Explicit non-goals
 
@@ -53,5 +53,6 @@ Keeping up with dozens of subreddits by hand is slow. Raw "top" lists hide the i
 | Trend explanations traceable to source posts | 100% |
 | Recommendations passing the critic that the user rates "useful" | ≥ 40% |
 | Approved drafts removed by moderators | < 10% |
-| LLM spend | ≤ configured daily cap (default $1/day) |
+| Paid API spend | **$0**: Groq free tier + free Reddit tier + local embeddings/OCR |
+| LLM tokens | ≤ per-model daily cap (default 160K, under Groq's 200K free limit) |
 | Median comments per approved contribution vs. the subreddit's median | ≥ 1.0× |

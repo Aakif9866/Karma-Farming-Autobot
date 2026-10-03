@@ -96,10 +96,10 @@ One module `agents/llm.py`, one function used everywhere:
 async def structured(task: Task, schema: type[T], messages: list[Msg], *, images: list[ImageRef] = []) -> T
 ```
 
-- `Task` maps to a model via settings (`cheap`, `strong`, `vision`). Default provider: Anthropic (Haiku for cheap, Sonnet for strong/vision). This is swappable by config; a second provider adapter gets added only when actually needed (ADR-009).
+- `Task` maps to a model via settings (`cheap`, `strong`, `vision`). Provider: **Groq free tier only** (ADR-013). Defaults: `openai/gpt-oss-20b` (cheap), `openai/gpt-oss-120b` (strong), `qwen/qwen3.8-27b` (vision; Groq's only image-input model). All three support strict `json_schema` structured outputs. Groq is OpenAI-compatible, so the official `groq` Python SDK is the only client dependency.
 - Structured outputs: Pydantic schema → provider tool/JSON-schema mode → validated. On a validation failure there is 1 repair retry with the error message, then the call fails.
-- Every call records `tokens_in/out`, `cost_usd` (price table in config) and `duration_ms` into `agent_run_steps`.
-- **Budget gate:** before each call, estimate the cost; if today's spend + estimate > `LLM_DAILY_BUDGET_USD`, raise `BudgetExceeded`. The run goes to `deferred_budget` (scheduled jobs) or returns a clear error to the UI (on-demand jobs).
+- Every call records `tokens_in/out` and `duration_ms` into `agent_run_steps`. There is no money cost on the free tier; **tokens and requests are the budget**.
+- **Quota gate:** Groq free limits are **per model**: 30 RPM, 1K requests/day, **8K tokens/min**, 200K tokens/day (verified 2026-10-03, re-check in Phase 0). Before each call, estimate tokens (`len(text)/3.5` + max output). If the model's minute window would exceed 8K TPM, wait. If today's tokens for that model + estimate > `LLM_DAILY_TOKEN_CAP` (default 160K = 80% of 200K, leaving headroom for on-demand work), raise `BudgetExceeded`. A `429` from Groq is respected via its `retry-after` header. The run goes to `deferred_budget` (scheduled jobs) or returns a clear error to the UI (on-demand jobs).
 - Timeouts: 60 s per call (configurable). Retries: 3 with exponential backoff + jitter on 429/5xx/timeouts only.
 - Test double: `FakeLLM` returns fixture outputs per schema, so tests never hit the network.
 
@@ -111,8 +111,9 @@ Reddit content is untrusted. It is always passed inside clearly delimited data b
 
 | Control | Default |
 |---|---|
-| Daily LLM budget | $1.00 |
-| Opinion mining per daily report | top 10 topics, ≤ 40 sampled comments each |
+| Daily token cap per model | 160K (of Groq's 200K free TPD) |
+| Max tokens per call | 7K in+out (must fit in the 8K TPM window) |
+| Opinion mining per daily report | top 10 topics, ≤ 25 sampled comments each (to fit in 7K tokens) |
 | Vision meme explanations per day | 20 |
 | Classification LLM fallback per day | 200 posts, batched 20/call |
 | Cluster labelling | only new/changed clusters, batched |

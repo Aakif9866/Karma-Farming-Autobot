@@ -20,7 +20,7 @@ flowchart LR
   pg[(PostgreSQL 16<br/>+ pgvector)]
   redis[(Redis<br/>broker + cache)]
   reddit[[Reddit Data API]]
-  llm[[LLM provider API]]
+  llm[[Groq API<br/>free tier]]
 
   user --> next
   next -->|REST /api/v1| api
@@ -105,8 +105,8 @@ Each job runs only the modules it needs. Graph details are in [AI_AGENT_DESIGN.m
 ## Configuration
 
 - `pydantic-settings` reads env vars (`.env` locally). One `Settings` object, injected.
-- Per-task model selection: `LLM_MODEL_CHEAP`, `LLM_MODEL_STRONG`, `LLM_MODEL_VISION`.
-- Budgets: `LLM_DAILY_BUDGET_USD`, `VISION_DAILY_LIMIT`, `COMMENTS_TOP_N`.
+- Per-task model selection (Groq): `LLM_MODEL_CHEAP`, `LLM_MODEL_STRONG`, `LLM_MODEL_VISION`.
+- Budgets: `LLM_DAILY_TOKEN_CAP` (per model), `VISION_DAILY_LIMIT`, `COMMENTS_TOP_N`.
 - Taxonomy and scoring weights live in versioned files (`config/taxonomy.yaml`, `config/scoring.yaml`), loaded into the DB with a version stamp so every score references the weights that produced it.
 
 ## Logging & observability

@@ -24,9 +24,9 @@ flowchart LR
 3. Once credentials exist: `scripts/smoke_reddit.py` → auth, 1 listing, 1 `/api/info`, 1 rules call, print rate-limit headers.
 4. Check the field availability table on ~10 real posts of each content type (image, gallery, video, poll, link).
 5. Pick the embedding model: embed 50 Hinglish + 50 English titles with both candidates and eyeball nearest neighbours (ADR-003).
-6. Confirm LLM provider + API key + daily budget.
-7. Choose the seed subreddit list (≈ 20 IN + 20 GLOBAL).
-**Dependencies**: Reddit approval (external), LLM API key.
+6. Create a Groq API key (free, no card) and re-verify the free-tier limits and model IDs.
+7. Write the seed subreddit list (general IN + GLOBAL subs, including r/vit and politics subs; no NSFW).
+**Dependencies**: Reddit approval (external), Groq API key.
 **Expected files**: `scripts/smoke_reddit.py`, `config/subreddits.seed.yaml`, updates to `REDDIT_API.md`, `DECISIONS.md`.
 **Acceptance**: smoke script succeeds against real Reddit **or** a documented decision to proceed on mock data while approval is pending; all ⚠️ items resolved or explicitly accepted as risks.
 **Testing**: manual smoke run, output pasted into DECISIONS.

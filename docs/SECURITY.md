@@ -22,7 +22,7 @@
 - **No bulk/unattended posting.** Publishing (L) is one item per explicit click, only for `approved` drafts, server-side throttled (≥ 10 min between posts, ≤ 5/day default), and logged.
 - Deletion compliance and retention per [REDDIT_API.md](REDDIT_API.md).
 - No model training on Reddit data.
-- NSFW excluded by default.
+- NSFW (`over_18`) posts are **always** dropped at ingestion and never stored (ADR-014).
 
 ## Privacy
 
@@ -36,6 +36,6 @@
 
 ## Secrets list (`.env.example`)
 
-`DATABASE_URL`, `REDIS_URL`, `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD` (script app, read-only use) , `REDDIT_USER_AGENT`, `ANTHROPIC_API_KEY`, `APP_SECRET_KEY`, `APP_ENCRYPTION_KEY`, `AUTHOR_HASH_SALT`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (bootstrap only).
+`DATABASE_URL`, `REDIS_URL`, `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD` (script app, read-only use) , `REDDIT_USER_AGENT`, `GROQ_API_KEY`, `APP_SECRET_KEY`, `APP_ENCRYPTION_KEY`, `AUTHOR_HASH_SALT`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (bootstrap only).
 
 > ⚠️ The script-app flow uses the account password. Use a dedicated Reddit account for **read-only** collection if possible, separate from the account you post from. Publishing (L) uses the auth-code flow with your main account's refresh token instead of its password.

@@ -45,11 +45,15 @@ gantt
   P10 Deploy                           :p10, after p9, 4d
 ```
 
+## Resolved (2026-10-03)
+- Reddit API: no credentials yet, user is applying. It is free for personal non-commercial use.
+- LLM: **Groq free tier only, no paid providers** (ADR-013).
+- Subreddits: general defaults plus **r/vit**.
+- NSFW: removed entirely (ADR-014).
+- Politics: **included** (Indian + global politics subs), with the sensitive-topic critic rules applied.
+
+Seed defaults (final list written in Phase 0): r/india, r/indiasocial, r/IndianDankMemes, r/developersIndia, r/IndiaInvestments, r/bangalore, r/mumbai, r/delhi, r/Cricket, r/bollywood, r/IndianPolitics, **r/vit** / r/technology, r/programming, r/ProgrammerHumor, r/memes, r/personalfinance, r/movies, r/gaming, r/AskReddit, r/worldnews, r/politics, r/MachineLearning.
+
 ## Open questions (need user input)
-1. Reddit API: do you already have an approved app / credentials? If not, OK to apply now with a neutral app name?
-2. LLM: Anthropic as the default provider OK? Daily budget, $1 default?
-3. Separate read-only Reddit account for collection (recommended) vs. your main account?
-4. Seed subreddits: any must-haves beyond the defaults (r/india, r/indiasocial, r/IndianDankMemes, r/developersIndia, r/IndiaInvestments, r/bangalore, r/mumbai, r/delhi, r/Cricket, r/bollywood … / r/technology, r/programming, r/ProgrammerHumor, r/memes, r/personalfinance, r/movies, r/gaming, r/AskReddit, r/worldnews, r/MachineLearning …)?
-5. NSFW excluded entirely: OK?
-6. Politics: include Indian politics subs (high-risk, sensitive) in MVP or defer?
-7. Production target (VPS vs PaaS): decide at Phase 10.
+1. Separate read-only Reddit account for collection (recommended) vs. your main account?
+2. Production target (VPS vs PaaS): decide at Phase 10.

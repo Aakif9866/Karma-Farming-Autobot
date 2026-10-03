@@ -65,7 +65,7 @@ Structured output schema:
  "community_specific": true,
  "confidence": 0.0}
 ```
-Inputs: preview image + OCR text + title + subreddit + template name (if any). These are all model interpretations and are labelled as such in the UI.
+Inputs: preview image + OCR text + title + subreddit + template name (if any). These are all model interpretations and are labelled as such in the UI. Model: `qwen/qwen3.8-27b` on Groq (≤ 3 images/request, each image counts as 2,048 input tokens).
 
 ## Template lifecycle (L)
 Per template: first seen, posts per day, subreddit spread, peak date, status (`new`, `spreading`, `saturated`, `fading`). This reuses the topic status rules from [TREND_DETECTION.md](TREND_DETECTION.md) applied to template post counts.
@@ -80,4 +80,4 @@ Inputs: a trending topic or template + target subreddit profile + rules. Output 
 - risks (sensitivity, overused template, repost risk)
 
 ## Costs
-pHash and Tesseract are local and free. The only paid step is vision explanation, capped per day. Expected: 20 images/day at the vision tier.
+pHash and Tesseract are local and free. Vision explanation is free too (Groq free tier) but quota-limited: 20 images/day ≈ 60K of the vision model's daily token cap.

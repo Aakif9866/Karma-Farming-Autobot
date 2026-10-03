@@ -20,6 +20,7 @@ IDs are referenced from [PHASES.md](PHASES.md) and [IMPLEMENTATION_STATUS.md](IM
 | ING-10 | Fetch subreddit metadata, rules and post requirements daily | MVP |
 | ING-11 | Retention job: purge content older than N days and content deleted on Reddit | MVP |
 | ING-12 | Every row carries `source` (`reddit` / `mock`) | MVP |
+| ING-13 | Drop NSFW (`over_18`) posts at ingestion; reject NSFW subreddits | MVP |
 
 ### CLS — Domain classification
 | ID | Requirement | Scope |
@@ -110,7 +111,7 @@ IDs are referenced from [PHASES.md](PHASES.md) and [IMPLEMENTATION_STATUS.md](IM
 |---|---|---|
 | AGT-01 | Per-job LangGraph workflows with selective execution | MVP |
 | AGT-02 | Every run persisted (`agent_runs`): status, node timings, errors, tokens, cost | MVP |
-| AGT-03 | Daily LLM budget cap; runs that would exceed it are deferred, not truncated silently | MVP |
+| AGT-03 | Per-model daily token cap + per-minute token limiter (Groq free tier); runs that would exceed it are deferred, not truncated silently | MVP |
 | AGT-04 | Human-approval interrupt with persisted state | MVP |
 
 ### UI — Frontend
@@ -120,7 +121,7 @@ See [SYSTEM_ARCHITECTURE.md § Frontend](SYSTEM_ARCHITECTURE.md#frontend). MVP p
 
 | ID | Requirement |
 |---|---|
-| NFR-01 Cost | Default LLM cap $1/day, configurable. Embeddings run locally (no API cost) |
+| NFR-01 Cost | **$0 paid APIs.** Groq free tier only, with per-model daily token caps under the free limits. Embeddings and OCR run locally |
 | NFR-02 Rate limits | Never exceed 60 QPM to Reddit (configurable ceiling below the 100 QPM limit) |
 | NFR-03 Explainability | Every score/recommendation stores its inputs and component breakdown |
 | NFR-04 Security | No secrets in code; OAuth tokens encrypted at rest; app behind auth. See [SECURITY.md](SECURITY.md) |

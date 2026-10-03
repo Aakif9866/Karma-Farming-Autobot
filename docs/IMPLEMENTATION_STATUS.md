@@ -8,7 +8,8 @@ Last updated: 2026-10-03
 - ☑ Architecture, database (ER), API spec, agent design
 - ☑ Trend detection, meme intelligence, content generation & critic
 - ☑ Security, testing, deployment, roadmap, phases, decisions
-- ☐ User approval of plan & open questions ([ROADMAP.md](ROADMAP.md#open-questions-need-user-input))
+- ☑ User answered open questions (2026-10-03)
+- ◐ Claude Code project setup (CLAUDE.md, skills, MCP)
 
 ## Phase 0 — Discovery
 - ⊘ Reddit API access applied for / approved *(user action)*
@@ -16,8 +17,8 @@ Last updated: 2026-10-03
 - ☐ `scripts/smoke_reddit.py` passes on real API
 - ☐ Field availability checked per content type
 - ☐ Embedding model chosen (ADR-003)
-- ☐ LLM provider + key + budget confirmed
-- ☐ Seed subreddit list agreed
+- ◐ LLM provider decided: Groq free tier (key pending)
+- ◐ Seed subreddit list: general + r/vit + politics, no NSFW (file pending)
 
 ## Phase 1 — Foundation
 - ☐ `.gitignore`, `.env.example`
