@@ -38,6 +38,12 @@ The user is in India and the Indian communities are primary. Daily reports run a
 ### ADR-012 Region filter instead of separate Indian/Global pages in MVP — Proposed
 The Indian Reddit and Global Reddit pages are presets of Trend Explorer (`?region=IN|GLOBAL`). This avoids three near-identical pages; dedicated pages can come later if they need unique widgets.
 
+### ADR-016 Same-origin API through the Next.js proxy — Accepted (2026-10-03)
+The browser never calls FastAPI directly. `frontend/proxy.ts` (Next 16's renamed middleware) rewrites `/api/*` to `API_INTERNAL_URL` at runtime, and server components call the API with the user's cookie forwarded. Consequences: the session cookie is first-party, there is no CORS config, and `SameSite=Lax` covers CSRF for our JSON POSTs, so no CSRF-token machinery is needed. The API port isn't exposed publicly in prod.
+
+### ADR-017 Sync SQLAlchemy 2 + psycopg 3 — Accepted (2026-10-03)
+Celery workers are sync and FastAPI runs sync endpoints in its threadpool, so one sync session layer serves both. Async would double the patterns for no measurable gain at one-user scale.
+
 ### ADR-013 Groq free tier as the only LLM provider — Accepted (2026-10-03)
 User constraint: no paid providers. Groq's free plan (no card) gives each model 30 RPM, 1K req/day, 8K TPM and 200K tokens/day (checked against console.groq.com/docs on 2026-10-03). Model roles: `openai/gpt-oss-20b` cheap, `openai/gpt-oss-120b` strong, `qwen/qwen3.8-27b` vision. All three support strict JSON-schema outputs. Because limits are per model, spreading tasks across the three roughly triples daily capacity (~480K usable tokens/day). Consequences: budget is tokens, not dollars; every call must fit in ~7K tokens; drafts are limited to ~15/day on the strong model; quality is below frontier models, which the critic and evals must account for. **Never add a credit card**: that switches the org to paid billing. Model IDs change often, so they live in config only.
 

@@ -6,7 +6,7 @@ A personal **Reddit trend intelligence and content-assistance** platform for Ind
 
 ## Status
 
-📐 **Planning.** Documentation complete; implementation starts with Phase 0/1 after plan approval. Live checklist: [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md).
+🏗️ **Phase 1 (foundation) built.** Phase 0 is waiting on Reddit API approval. Live checklist: [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md).
 
 ## Stack
 
@@ -18,4 +18,9 @@ Start at [docs/README.md](docs/README.md).
 
 ## Quickstart
 
-Available after Phase 1 (`docker compose up`). See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+```bash
+cp .env.example .env        # fill in the secrets (instructions inside)
+docker compose up --build
+open http://localhost:3000  # log in with ADMIN_EMAIL / ADMIN_PASSWORD
+```
+Running without Docker, tests, and type generation: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).

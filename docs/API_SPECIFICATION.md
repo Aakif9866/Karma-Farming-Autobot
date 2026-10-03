@@ -4,7 +4,7 @@ REST, JSON, prefix `/api/v1`. FastAPI generates the authoritative OpenAPI at `/a
 
 ## Conventions
 
-- **Auth**: session cookie (HTTP-only, SameSite=Lax) from `POST /auth/login`. All routes except `/health*` and `/auth/login` require auth.
+- **Auth**: signed session cookie `kfa_session` (HTTP-only, SameSite=Lax, Secure in prod) from `POST /auth/login`. All routes except `/health*` and `/auth/login` require auth. The browser only talks to the Next.js origin, and `frontend/proxy.ts` forwards `/api/*` to FastAPI (ADR-016).
 - **Pagination**: cursor-based: `?limit=25&cursor=<opaque>` → `{ "items": [...], "next_cursor": "..." | null }`. Max `limit` = 100.
 - **Filtering**: query params, e.g. `?region=IN&category=finance&since=2026-10-01T00:00:00Z`.
 - **Errors**: `{"error": {"code": "BUDGET_EXCEEDED", "message": "...", "details": {}}}` with the matching HTTP status (400 validation, 401, 404, 409 state conflict, 422, 429 budget/rate, 503 upstream).

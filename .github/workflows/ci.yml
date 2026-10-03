@@ -44,7 +44,10 @@ jobs:
       - run: uv run mypy app
       - run: uv run pytest -q
       - name: Migrations apply cleanly and match models
-        run: uv run alembic upgrade head && uv run alembic check
+        run: |
+          uv run alembic upgrade head
+          uv run alembic check 2>&1 | tee /tmp/alembic-check.txt || {
+            echo "::error title=alembic check::$(tail -c 1500 /tmp/alembic-check.txt | tr '\n' ' ')"; exit 1; }
 
   frontend:
     runs-on: ubuntu-latest
@@ -54,6 +57,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v7
         with:
           node-version: 22

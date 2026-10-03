@@ -21,14 +21,16 @@ Last updated: 2026-10-03
 - ◐ Seed subreddit list: general + r/vit + politics, no NSFW (file pending)
 
 ## Phase 1 — Foundation
-- ☐ `.gitignore`, `.env.example`
-- ☐ Backend skeleton (settings, logging, DB, health)
-- ☐ Alembic + extensions migration + `users`
-- ☐ Session auth + admin bootstrap
-- ☐ Frontend skeleton (theme, shell, login)
-- ☐ Dockerfiles + docker-compose
-- ☐ CI workflow green
-- ☐ OpenAPI → TS type generation
+- ☑ `.gitignore`, `.env.example`
+- ☑ Backend skeleton: settings, structlog, DB session, error envelope, health (`/api/v1/health`, `/health/ready`)
+- ☑ Alembic + migration 0001 (pgcrypto, citext, vector + `users`)
+- ☑ Session auth (login/logout/me, argon2, per-email rate limit) + admin bootstrap
+- ☑ Celery app (worker + beat, `system.ping`)
+- ☑ Frontend skeleton: dark theme, auth proxy, login, sidebar shell, dashboard status, phase placeholders, loading/error states
+- ☑ Dockerfiles (backend, frontend standalone) + docker-compose + read-only DB role init
+- ◐ CI workflow (backend, frontend, gitleaks): see the test status below
+- ☑ OpenAPI → TS type generation (`pnpm gen:api`, CI drift check)
+- ⊘ `docker compose up` full-stack verification: blocked by local Docker Desktop failure (disk full → storage I/O errors)
 
 ## Phase 2 — Ingestion
 - ☐ RedditClient + rate limiter (ING-01, 08, 09)

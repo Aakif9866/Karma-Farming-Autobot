@@ -113,7 +113,7 @@ Each job runs only the modules it needs. Graph details are in [AI_AGENT_DESIGN.m
 
 - `structlog` JSON logs to stdout with `request_id`, `job_id`, `run_id`, `subreddit`.
 - `agent_runs` + `agent_run_steps` tables hold the per-node timeline, tokens and cost, which the Agent Monitor UI reads.
-- Health endpoints: `/health` (liveness), `/health/ready` (DB + Redis), `/health/reddit` (last successful call, rate-limit remaining).
+- Health endpoints (under `/api/v1`): `/health` (liveness), `/health/ready` (DB + Redis), `/health/reddit` (Phase 2: last successful call, rate-limit remaining).
 
 ## Frontend
 

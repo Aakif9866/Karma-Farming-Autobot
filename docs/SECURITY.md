@@ -6,7 +6,7 @@
 |---|---|---|
 | Reddit client secret, LLM API key | leak via repo/logs | env vars only; `.env` in `.gitignore`; `.env.example` has placeholders; log redaction filter for keys/tokens; `gitleaks` in CI |
 | User's Reddit refresh token (L, publishing) | DB leak → account takeover | encrypted at rest (Fernet, key from `APP_ENCRYPTION_KEY` env); minimal scopes (`identity read submit`); revocable from Settings |
-| The app itself | unauthenticated access to drafts/publishing | session auth (argon2 password hash, HTTP-only secure cookie, CSRF token on mutating requests); no public signup; login rate limit |
+| The app itself | unauthenticated access to drafts/publishing | session auth (argon2 password hash, signed HTTP-only SameSite=Lax cookie, Secure in prod); same-origin API via the Next.js proxy, so there is no CORS and SameSite blocks cross-site POSTs (ADR-016); no public signup; login rate limit per email (10 per 5 min, Redis) |
 | LLM pipelines | prompt injection via Reddit content | content passed as delimited data; schema-only outputs; models that read Reddit text have no tools; see [AI_AGENT_DESIGN.md](AI_AGENT_DESIGN.md) |
 | Rendering Reddit text in UI | XSS | render as text / sanitised markdown (no raw HTML); strict CSP on frontend |
 | Outbound fetches of media previews | SSRF | allow-list hosts (`preview.redd.it`, `i.redd.it`, `external-preview.redd.it`, `v.redd.it`, `i.imgur.com`), size cap 5 MB, timeout 10 s, no redirects off-list |
