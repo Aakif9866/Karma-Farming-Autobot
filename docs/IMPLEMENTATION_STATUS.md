@@ -9,7 +9,7 @@ Last updated: 2026-10-03
 - ☑ Trend detection, meme intelligence, content generation & critic
 - ☑ Security, testing, deployment, roadmap, phases, decisions
 - ☑ User answered open questions (2026-10-03)
-- ◐ Claude Code project setup (CLAUDE.md, skills, MCP)
+- ☑ Claude Code project setup: CLAUDE.md, 9 skills, `.mcp.json` (MCP servers configured, not yet approved/connected)
 
 ## Phase 0 — Discovery
 - ⊘ Reddit API access applied for / approved *(user action)*

@@ -20,5 +20,6 @@
 | [DECISIONS.md](DECISIONS.md) | Architecture decision records |
 | [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) | Live checklist |
 | [CHANGELOG.md](CHANGELOG.md) | What changed when |
+| [CLAUDE_CODE_SETUP.md](CLAUDE_CODE_SETUP.md) | Claude Code skills, MCP servers, env vars, troubleshooting |
 
 Reading order for a new contributor: Vision → Requirements → Architecture → Phases → whichever module you're touching.
