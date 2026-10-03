@@ -54,6 +54,7 @@ gantt
 
 Seed defaults (final list written in Phase 0): r/india, r/indiasocial, r/IndianDankMemes, r/developersIndia, r/IndiaInvestments, r/bangalore, r/mumbai, r/delhi, r/Cricket, r/bollywood, r/IndianPolitics, **r/vit** / r/technology, r/programming, r/ProgrammerHumor, r/memes, r/personalfinance, r/movies, r/gaming, r/AskReddit, r/worldnews, r/politics, r/MachineLearning.
 
+- Reddit accounts: a **separate read-only account** for collection (script app); your main account is used only for optional publishing later.
+
 ## Open questions (need user input)
-1. Separate read-only Reddit account for collection (recommended) vs. your main account?
-2. Production target (VPS vs PaaS): decide at Phase 10.
+1. Production target (VPS vs PaaS): decide at Phase 10.
